@@ -1,0 +1,32 @@
+# .github/workflows/test.yml
+name: Test Workflow
+
+on:
+  schedule:
+    - cron: '*/1 * * * *'  # Run every minute
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12.1'
+
+    - name: Run test.py
+      id: run-test
+      run: python test.py
+
+    - name: Check Counter Value
+      run: |
+        counter_value=$(echo "${{ steps.run-test.outputs.stdout }}" | grep -oP 'Counter: \K\d+')
+        if [[ $counter_value -eq 1 ]]; then
+          echo "The counter is 1!"
+        else
+          echo "The counter is not 1."
+        fi
