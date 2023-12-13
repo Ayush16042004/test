@@ -1,4 +1,3 @@
-
 name: Test Workflow
 
 on:
@@ -24,9 +23,13 @@ jobs:
 
     - name: Check Counter Value
       run: |
-        counter_value=$(echo "${{ steps.run-test.outputs.stdout }}" | grep -oP 'Counter: \K\d+')
-        if [[ $counter_value -eq 1 ]]; then
-          echo "The counter is 1!"
+        counter_value=$(echo "${{ steps.run-test.outputs.stdout }}" | grep -oP 'Counter: (\K\d+)?')
+        if [[ -n $counter_value ]]; then
+          if [[ $counter_value -eq 1 ]]; then
+            echo "The counter is 1!"
+          else
+            echo "The counter is not 1."
+          fi
         else
-          echo "The counter is not 1."
+          echo "Counter value not found."
         fi
